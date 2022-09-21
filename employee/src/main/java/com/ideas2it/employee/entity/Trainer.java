@@ -5,7 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Data
@@ -14,4 +15,6 @@ import javax.persistence.Entity;
 public class Trainer extends Employee {
     private String ProjectManager;
     private String project;
+    @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL, mappedBy = "trainer")
+    private List<Trainee> trainees;
 }

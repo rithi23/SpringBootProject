@@ -5,11 +5,16 @@ import com.ideas2it.employee.entity.Trainer;
 import com.ideas2it.employee.exception.TraineeNotFoundException;
 import com.ideas2it.employee.exception.TrainerNotFoundException;
 import com.ideas2it.employee.service.EmployeeService;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class EmployeeController {
+
+
 
     @Autowired
     private EmployeeService employeeService;
@@ -60,5 +65,24 @@ public class EmployeeController {
         return employeeService.deleteTraineeById(traineeId);
     }
 
+    @GetMapping("/trainers/")
+    public List<Trainer> getAllTrainers() {
+        return employeeService.getAllTrainers();
+    }
 
+    @GetMapping("/trainees/")
+    public List<Trainee> getAllTrainees() {
+        return employeeService.getAllTrainees();
+    }
+
+//    @PutMapping("/trainee/associate/{id}")
+//    public void assignTrainerForTrainees(@PathVariable("id") long id, @RequestBody Trainee trainee) throws TraineeNotFoundException {
+//        List<Trainer> trainers = getAllTrainers();
+//        List<Trainee> trainees = getAllTrainees();
+//        trainers.forEach(n->{
+//            System.out.println(n.getId() + " " +n.getName());
+//        });
+//
+//        Trainee traineeEmployee = employeeService.fetchTraineeById(id);
+//    }
 }

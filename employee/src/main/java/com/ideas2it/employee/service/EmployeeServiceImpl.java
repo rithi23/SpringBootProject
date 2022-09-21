@@ -7,9 +7,11 @@ import com.ideas2it.employee.exception.TrainerNotFoundException;
 import com.ideas2it.employee.repository.TraineeRepository;
 import com.ideas2it.employee.repository.TrainerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -35,7 +37,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Trainer fetchTrainerById(long trainerId) throws TrainerNotFoundException {
-        Optional<Trainer> trainer = trainerRepository.findById(trainerId);
+        Optional<Trainer> trainer = Optional.ofNullable(trainerRepository.fetchTrainerById(trainerId));
         if(!trainer.isPresent()) {
             throw new TrainerNotFoundException("The trainer is not found in this id");
         }
@@ -44,7 +46,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Trainee fetchTraineeById(long traineeId) throws TraineeNotFoundException {
-        Optional<Trainee> trainee = traineeRepository.findById(traineeId);
+        Optional<Trainee> trainee = Optional.ofNullable(traineeRepository.fetchTraineeById(traineeId));
         if(!trainee.isPresent()) {
             throw new TraineeNotFoundException("The trainee is not found in this id");
         }
@@ -146,16 +148,29 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public String deleteTrainerById(long trainerId) throws TrainerNotFoundException {
         Trainer trainer =  fetchTrainerById(trainerId);
-        trainerRepository.deleteById(trainer.getId());
+        trainer.setActive(false);
+        trainerRepository.save(trainer);
         return "Trainer deleted successfully";
     }
 
     @Override
     public String deleteTraineeById(long traineeId) throws TraineeNotFoundException {
         Trainee trainee = fetchTraineeById(traineeId);
-        traineeRepository.deleteById(trainee.getId());
+        trainee.setActive(false);
+        traineeRepository.save(trainee);
         return "Trainee deleted successfully";
    }
+
+    public List<Trainer> getAllTrainers() {
+        List<Trainer> trainers = trainerRepository.getAllTrainers();
+        return trainers;
+    }
+
+    @Override
+    public List<Trainee> getAllTrainees() {
+        List<Trainee> trainees = traineeRepository.getAllTrainees();
+        return trainees;
+    }
 
 
 }

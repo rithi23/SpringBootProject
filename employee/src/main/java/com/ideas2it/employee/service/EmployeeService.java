@@ -5,6 +5,8 @@ import com.ideas2it.employee.entity.Trainer;
 import com.ideas2it.employee.exception.TraineeNotFoundException;
 import com.ideas2it.employee.exception.TrainerNotFoundException;
 
+import java.util.List;
+
 public interface EmployeeService {
     Trainer saveTrainer( Trainer trainer);
 
@@ -22,4 +24,8 @@ public interface EmployeeService {
     String deleteTrainerById(long trainerId) throws TrainerNotFoundException;
 
     String deleteTraineeById(long traineeId) throws TraineeNotFoundException;
+
+    List<Trainer> getAllTrainers();
+
+    List<Trainee> getAllTrainees();
 }

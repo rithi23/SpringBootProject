@@ -26,4 +26,5 @@ public class Employee {
     private int age;
     private String position;
     private float previousExperience;
+    private boolean isActive = true;
 }
