@@ -7,7 +7,6 @@ import com.ideas2it.employee.exception.TrainerNotFoundException;
 import com.ideas2it.employee.repository.TraineeRepository;
 import com.ideas2it.employee.repository.TrainerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +37,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Trainer fetchTrainerById(long trainerId) throws TrainerNotFoundException {
         Optional<Trainer> trainer = Optional.ofNullable(trainerRepository.fetchTrainerById(trainerId));
-        if(!trainer.isPresent()) {
+        if(trainer.isEmpty()) {
             throw new TrainerNotFoundException("The trainer is not found in this id");
         }
         return trainer.get();
@@ -47,10 +46,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Trainee fetchTraineeById(long traineeId) throws TraineeNotFoundException {
         Optional<Trainee> trainee = Optional.ofNullable(traineeRepository.fetchTraineeById(traineeId));
-        if(!trainee.isPresent()) {
-            throw new TraineeNotFoundException("The trainee is not found in this id");
+        if(trainee.isEmpty()) {
+            throw  new TraineeNotFoundException("Trainee is not found in this id");
         }
-        return trainee.get();
+        return  trainee.get();
     }
 
     @Override
@@ -78,9 +77,8 @@ public class EmployeeServiceImpl implements EmployeeService {
             trainerEmployee.setBloodGroup(trainer.getBloodGroup());
         }
 
-        if(Objects.nonNull(trainer.getDateOfBirth()) && !"".equalsIgnoreCase(trainer.getDateOfBirth())) {
+
             trainerEmployee.setDateOfBirth(trainer.getDateOfBirth());
-        }
 
         trainerEmployee.setAge(trainer.getAge());
 
@@ -126,9 +124,8 @@ public class EmployeeServiceImpl implements EmployeeService {
             traineeEmployee.setBloodGroup(trainee.getBloodGroup());
         }
 
-        if(Objects.nonNull(trainee.getDateOfBirth()) && !"".equalsIgnoreCase(trainee.getDateOfBirth())) {
-            traineeEmployee.setDateOfBirth(trainee.getDateOfBirth());
-        }
+
+        traineeEmployee.setDateOfBirth(trainee.getDateOfBirth());
 
         traineeEmployee.setAge(trainee.getAge());
 
@@ -168,8 +165,28 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public List<Trainee> getAllTrainees() {
-        List<Trainee> trainees = traineeRepository.getAllTrainees();
+        List<Trainee> trainees = traineeRepository.findByIsActiveTrue();
         return trainees;
+    }
+
+    @Override
+    public Trainer fetchTrainerByEmployeeId(String trainerId) throws NullPointerException {
+        return trainerRepository.findByEmployeeId(trainerId);
+    }
+
+    @Override
+    public Trainee fetchTraineeByEmployeeId(String traineeId) {
+        return traineeRepository.findByEmployeeId(traineeId);
+    }
+
+    @Override
+    public void associateTrainerAndTrainee(long trainerId, long traineeId) throws TrainerNotFoundException, TraineeNotFoundException {
+        Trainer trainer = fetchTrainerById(trainerId);
+        Trainee trainee = fetchTraineeById(traineeId);
+        trainee.setTrainer(trainer);
+        trainer.getTrainees().add(trainee);
+        traineeRepository.save(trainee);
+        trainerRepository.save(trainer);
     }
 
 

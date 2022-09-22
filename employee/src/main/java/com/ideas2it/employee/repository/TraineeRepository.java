@@ -14,4 +14,10 @@ public interface TraineeRepository extends JpaRepository<Trainee, Long> {
 
     @Query("select trainee from Trainee trainee where trainee.id = ?1 and isActive = true")
     public Trainee fetchTraineeById(long traineeId);
+
+    List<Trainee> findByIsActiveTrue();
+
+    Object findByIdAndIsActive(long traineeId, boolean b);
+
+    Trainee findByEmployeeId(String traineeId);
 }

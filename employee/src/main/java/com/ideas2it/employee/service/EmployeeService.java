@@ -28,4 +28,10 @@ public interface EmployeeService {
     List<Trainer> getAllTrainers();
 
     List<Trainee> getAllTrainees();
+
+    Trainer fetchTrainerByEmployeeId(String trainerId);
+
+    Trainee fetchTraineeByEmployeeId(String traineeId);
+
+    void associateTrainerAndTrainee(long trainerId, long traineeId) throws TrainerNotFoundException, TraineeNotFoundException;
 }

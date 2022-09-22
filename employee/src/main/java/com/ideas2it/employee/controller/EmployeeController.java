@@ -10,11 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Scanner;
 
 @RestController
 public class EmployeeController {
 
-
+    Scanner scan = new Scanner(System.in);
 
     @Autowired
     private EmployeeService employeeService;
@@ -40,9 +41,8 @@ public class EmployeeController {
     }
 
     @GetMapping("/trainee/{traineeId}")
-    public String fetchTraineeById(@PathVariable("traineeId") long traineeId) throws TraineeNotFoundException {
-        System.out.println(employeeService.fetchTraineeById(traineeId));
-        return "tue";
+    public Trainee fetchTraineeById(@PathVariable("traineeId") long traineeId) throws TraineeNotFoundException {
+        return employeeService.fetchTraineeById(traineeId);
     }
 
     @PutMapping("/trainer/{trainerId}")
@@ -51,7 +51,8 @@ public class EmployeeController {
     }
 
     @PutMapping("/trainee/{traineeId}")
-    public Trainee updateTraineeById(@PathVariable("traineeId") long traineeId, @RequestBody Trainee trainee) throws TraineeNotFoundException {
+    public Trainee updateTraineeById(@PathVariable("traineeId") long traineeId,
+                                     @RequestBody Trainee trainee) throws TraineeNotFoundException {
         return employeeService.updateTraineeById(traineeId, trainee);
     }
 
@@ -65,24 +66,11 @@ public class EmployeeController {
         return employeeService.deleteTraineeById(traineeId);
     }
 
-    @GetMapping("/trainers/")
-    public List<Trainer> getAllTrainers() {
-        return employeeService.getAllTrainers();
-    }
+    @PutMapping("/associate/{trainerId}/{traineeId}")
+    public void associateTrainerAndTrainee(@PathVariable("trainerId") long trainerId,
+                                           @PathVariable("traineeId") long traineeId) throws TraineeNotFoundException,
+                                           TrainerNotFoundException {
 
-    @GetMapping("/trainees/")
-    public List<Trainee> getAllTrainees() {
-        return employeeService.getAllTrainees();
+    employeeService.associateTrainerAndTrainee(trainerId, traineeId);
     }
-
-//    @PutMapping("/trainee/associate/{id}")
-//    public void assignTrainerForTrainees(@PathVariable("id") long id, @RequestBody Trainee trainee) throws TraineeNotFoundException {
-//        List<Trainer> trainers = getAllTrainers();
-//        List<Trainee> trainees = getAllTrainees();
-//        trainers.forEach(n->{
-//            System.out.println(n.getId() + " " +n.getName());
-//        });
-//
-//        Trainee traineeEmployee = employeeService.fetchTraineeById(id);
-//    }
 }

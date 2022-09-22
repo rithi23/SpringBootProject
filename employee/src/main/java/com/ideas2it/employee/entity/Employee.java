@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @MappedSuperclass
 @Data
@@ -22,7 +23,7 @@ public class Employee {
     private String address;
     private String emailId;
     private String bloodGroup;
-    private String dateOfBirth;
+    private LocalDate dateOfBirth;
     private int age;
     private String position;
     private float previousExperience;

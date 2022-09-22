@@ -16,4 +16,5 @@ public interface TrainerRepository extends JpaRepository<Trainer,Long> {
     @Query("select e from Trainer e where e.id = ?1 and e.isActive = true")
     public Trainer fetchTrainerById(long trainerId);
 
+    Trainer findByEmployeeId(String trainerId);
 }
