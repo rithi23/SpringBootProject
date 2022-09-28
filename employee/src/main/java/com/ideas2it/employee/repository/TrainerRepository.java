@@ -13,7 +13,7 @@ public interface TrainerRepository extends JpaRepository<Trainer,Long> {
     @Query("Select trainer from Trainer trainer where trainer.isActive = true")
     public List<Trainer> getAllTrainers();
 
-    @Query("select e from Trainer e where e.id = ?1 and e.isActive = true")
+    @Query("select trainer from Trainer trainer where trainer.id = ?1 and trainer.isActive = true")
     public Trainer fetchTrainerById(long trainerId);
 
     Trainer findByEmployeeId(String trainerId);

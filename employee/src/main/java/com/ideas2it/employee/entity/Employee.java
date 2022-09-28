@@ -14,9 +14,11 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class Employee {
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
+
     private String employeeId;
     private String name;
     private long phoneNumber;
