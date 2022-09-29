@@ -1,34 +1,22 @@
 package com.ideas2it.employee.service;
 
-import com.ideas2it.employee.entity.Role;
 import com.ideas2it.employee.entity.Trainee;
 import com.ideas2it.employee.entity.Trainer;
-import com.ideas2it.employee.exception.RoleNotFoundException;
 import com.ideas2it.employee.exception.TraineeNotFoundException;
 import com.ideas2it.employee.exception.TrainerNotFoundException;
-import com.ideas2it.employee.repository.RoleRepository;
 import com.ideas2it.employee.repository.TraineeRepository;
 import com.ideas2it.employee.repository.TrainerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 @Component
 @Service
-public class EmployeeServiceImpl implements EmployeeService, UserDetailsService {
+public class EmployeeServiceImpl implements EmployeeService {
 
     @Autowired
     private TrainerRepository trainerRepository;
@@ -36,28 +24,13 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
     @Autowired
     private TraineeRepository traineeRepository;
 
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    @Autowired
-    private User user;
-
-
-//    @Autowired
-//    private UserDetailsService userDetailsService;
-
     @Override
     public Trainer saveTrainer(Trainer trainer) {
-        trainer.setPassword(bCryptPasswordEncoder.encode(trainer.getPassword()));
         return trainerRepository.save(trainer);
     }
 
     @Override
     public Trainee saveTrainee(Trainee trainee) {
-        trainee.setPassword(bCryptPasswordEncoder.encode(trainee.getPassword()));
         return traineeRepository.save(trainee);
     }
 
@@ -216,55 +189,8 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
         trainerRepository.save(trainer);
     }
 
-    @Override
-    public void saveRole(Role role) {
-        roleRepository.save(role);
-    }
-
-    @Override
-    public void addRoleToTrainer(Long employeeId, Long roleId) throws TrainerNotFoundException, RoleNotFoundException {
-        Optional<Role> role = roleRepository.findById(roleId);
-        if(role.isEmpty()) {
-            throw new RoleNotFoundException("Invalid role id");
-        }
-        Trainer trainer = trainerRepository.fetchTrainerById(employeeId);
-        trainer.getRoles().add(role.get());
-        trainerRepository.save(trainer);
-        roleRepository.save(role.get());
-    }
-
-    @Override
-    public void addRoleToTrainee(Long employeeId, Long roleId) throws TraineeNotFoundException, RoleNotFoundException {
-        Trainee trainee = fetchTraineeById(employeeId);
-        Optional<Role> role = roleRepository.findById(roleId);
-        if(role.isEmpty()) {
-            throw new RoleNotFoundException("Invalid role id");
-        }
-        trainee.getRoles().add(role.get());
-        traineeRepository.save(trainee);
-    }
-
-
-    public UserDetails loadUserByUsername(String employeeId) throws UsernameNotFoundException {
-        Trainer trainer = trainerRepository.findByEmployeeId(employeeId);
-        Trainee trainee = traineeRepository.findByEmployeeId(employeeId);
-        if(trainer != null) {
-            trainer.getRoles().forEach(role-> {
-                user.getAuthorities().add(new SimpleGrantedAuthority(role.getRoleName()));
-            });
-            return new org.springframework.security.core.userdetails.User(trainer.getEmployeeId(),trainer.getPassword(), user.getAuthorities());
-        } else if (trainee != null) {
-            trainee.getRoles().forEach(role-> {
-                user.getAuthorities().add(new SimpleGrantedAuthority(role.getRoleName()));
-            });
-            return new org.springframework.security.core.userdetails.User(trainee.getEmployeeId(),trainee.getPassword(), user.getAuthorities());
-        } else {
-            throw new UsernameNotFoundException("The user name is not found");
-        }
-    }
 
 }
-
 
 
 

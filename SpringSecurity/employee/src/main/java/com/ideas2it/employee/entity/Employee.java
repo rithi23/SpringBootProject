@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
 
 @MappedSuperclass
 @Data
@@ -16,7 +14,6 @@ import java.util.Collection;
 @AllArgsConstructor
 @Builder
 public class Employee {
-
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -25,14 +22,10 @@ public class Employee {
     private long phoneNumber;
     private String address;
     private String emailId;
-    private String password;
     private String bloodGroup;
     private LocalDate dateOfBirth;
     private int age;
     private String position;
     private float previousExperience;
     private boolean isActive = true;
-
-    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
-    private Collection<Role> roles = new ArrayList<>();
 }

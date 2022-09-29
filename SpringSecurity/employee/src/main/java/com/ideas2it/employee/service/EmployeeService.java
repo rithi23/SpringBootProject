@@ -1,9 +1,7 @@
 package com.ideas2it.employee.service;
 
-import com.ideas2it.employee.entity.Role;
 import com.ideas2it.employee.entity.Trainee;
 import com.ideas2it.employee.entity.Trainer;
-import com.ideas2it.employee.exception.RoleNotFoundException;
 import com.ideas2it.employee.exception.TraineeNotFoundException;
 import com.ideas2it.employee.exception.TrainerNotFoundException;
 
@@ -13,6 +11,8 @@ public interface EmployeeService {
     Trainer saveTrainer( Trainer trainer);
 
     Trainee saveTrainee(Trainee trainee);
+
+
     Trainer fetchTrainerById(long trainerId) throws TrainerNotFoundException;
 
     Trainee fetchTraineeById(long traineeId) throws TraineeNotFoundException;
@@ -34,10 +34,4 @@ public interface EmployeeService {
     Trainee fetchTraineeByEmployeeId(String traineeId);
 
     void associateTrainerAndTrainee(long trainerId, long traineeId) throws TrainerNotFoundException, TraineeNotFoundException;
-
-    void saveRole(Role role);
-
-    void addRoleToTrainer(Long employeeId, Long roleId) throws TrainerNotFoundException, RoleNotFoundException;
-
-    void addRoleToTrainee(Long employeeId, Long roleId) throws TraineeNotFoundException, RoleNotFoundException;
 }

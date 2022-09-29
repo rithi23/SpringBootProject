@@ -1,23 +1,29 @@
 package com.ideas2it.employee.controller;
 
-import com.ideas2it.employee.entity.Role;
 import com.ideas2it.employee.entity.Trainee;
 import com.ideas2it.employee.entity.Trainer;
-import com.ideas2it.employee.exception.RoleNotFoundException;
 import com.ideas2it.employee.exception.TraineeNotFoundException;
 import com.ideas2it.employee.exception.TrainerNotFoundException;
-import com.ideas2it.employee.model.AddRoleToEmployeeModel;
-import com.ideas2it.employee.model.AssociationModel;
-import com.ideas2it.employee.service.ervice;
+import com.ideas2it.employee.service.EmployeeService;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Scanner;
 
 @RestController
 public class EmployeeController {
 
+    Scanner scan = new Scanner(System.in);
+
     @Autowired
     private EmployeeService employeeService;
+
+    @GetMapping("/")
+    public String display() {
+        return "Welcome to employee Management";
+    }
 
     @PostMapping("/trainer")
     public Trainer saveTrainer(@RequestBody Trainer trainer) {
@@ -27,11 +33,6 @@ public class EmployeeController {
     @PostMapping("/trainee")
     public Trainee saveTrainee(@RequestBody Trainee trainee) {
         return employeeService.saveTrainee(trainee);
-    }
-
-    @PostMapping("/role")
-    public void saveRole(@RequestBody Role role) {
-        employeeService.saveRole(role);
     }
 
     @GetMapping("/trainer/{trainerId}")
@@ -65,21 +66,10 @@ public class EmployeeController {
         return employeeService.deleteTraineeById(traineeId);
     }
 
-    @PutMapping("/associate")
-    public void association(@RequestBody AssociationModel associationModel) throws
-                               TrainerNotFoundException,TraineeNotFoundException {
-        employeeService.associateTrainerAndTrainee(associationModel.getTrainerId(),associationModel.getTraineeId());
-    }
-
-    @PutMapping("/trainer/addRole")
-    public String addRoleToTrainer(@RequestBody AddRoleToEmployeeModel addRoleToEmployeeModel) throws RoleNotFoundException,TrainerNotFoundException {
-        employeeService.addRoleToTrainer(addRoleToEmployeeModel.getEmployeeId(),addRoleToEmployeeModel.getRoleId());
-        return "Successfully role added";
-    }
-
-    @PutMapping("/trainee/addRole")
-    public String addRoleToTrainee(@RequestBody AddRoleToEmployeeModel addRoleToEmployeeModel) throws RoleNotFoundException,TraineeNotFoundException {
-        employeeService.addRoleToTrainee(addRoleToEmployeeModel.getEmployeeId(), addRoleToEmployeeModel.getRoleId());
-        return "Successfully role added";
+    @PutMapping("/associate/{trainerId}/{traineeId}")
+    public void associateTrainerAndTrainee(@PathVariable("trainerId") long trainerId,
+                                           @PathVariable("traineeId") long traineeId) throws TraineeNotFoundException,
+                                           TrainerNotFoundException {
+    employeeService.associateTrainerAndTrainee(trainerId, traineeId);
     }
 }
