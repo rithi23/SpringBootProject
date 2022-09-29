@@ -1,10 +1,15 @@
 package com.ideas2it.employee.controller;
 
+import com.ideas2it.employee.entity.Role;
 import com.ideas2it.employee.entity.Trainee;
 import com.ideas2it.employee.entity.Trainer;
+import com.ideas2it.employee.entity.User;
+import com.ideas2it.employee.exception.IdNotFoundException;
 import com.ideas2it.employee.exception.TraineeNotFoundException;
 import com.ideas2it.employee.exception.TrainerNotFoundException;
 import com.ideas2it.employee.model.AssociationModel;
+import com.ideas2it.employee.model.RoleModel;
+import com.ideas2it.employee.model.UserModel;
 import com.ideas2it.employee.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -61,5 +66,27 @@ public class EmployeeController {
     public void association(@RequestBody AssociationModel associationModel) throws
                                TrainerNotFoundException,TraineeNotFoundException {
         employeeService.associateTrainerAndTrainee(associationModel.getTrainerId(),associationModel.getTraineeId());
+    }
+
+    @PostMapping("/saveRole")
+    public String saveRole(@RequestBody Role role) {
+        return employeeService.saveRole(role);
+    }
+
+    @PutMapping("/addRole")
+    public String addRoleToUser(@RequestBody RoleModel roleModel) {
+        employeeService.addRoleToUser(roleModel.getEmployeeId(),roleModel.getRoleId());
+        return "Role added successfully";
+    }
+
+    @PostMapping("/addUser")
+    public String addUser(@RequestBody User user) {
+        employeeService.addUser(user);
+        return "user added successfully";
+    }
+
+    @PutMapping("/assignUser")
+    public void assignUserToEmployee(@RequestBody UserModel userModel) throws IdNotFoundException {
+        employeeService.assignUserToEmployee(userModel.getEmployeeId(),userModel.getUserId());
     }
 }

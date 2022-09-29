@@ -1,28 +1,47 @@
 package com.ideas2it.employee.service;
 
+import com.ideas2it.employee.entity.Role;
 import com.ideas2it.employee.entity.Trainee;
 import com.ideas2it.employee.entity.Trainer;
+import com.ideas2it.employee.entity.User;
+import com.ideas2it.employee.exception.IdNotFoundException;
 import com.ideas2it.employee.exception.TraineeNotFoundException;
 import com.ideas2it.employee.exception.TrainerNotFoundException;
+import com.ideas2it.employee.repository.RoleRepository;
 import com.ideas2it.employee.repository.TraineeRepository;
 import com.ideas2it.employee.repository.TrainerRepository;
+import com.ideas2it.employee.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 @Service
-public class EmployeeServiceImpl implements EmployeeService {
+@Slf4j
+public class EmployeeServiceImpl implements EmployeeService, UserDetailsService {
 
     @Autowired
     private TrainerRepository trainerRepository;
 
     @Autowired
     private TraineeRepository traineeRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public Trainer saveTrainer(Trainer trainer) {
@@ -189,7 +208,57 @@ public class EmployeeServiceImpl implements EmployeeService {
         trainerRepository.save(trainer);
     }
 
+    @Override
+    public void addRoleToUser(long employeeId, long roleId) {
+        Optional<Role> role = roleRepository.findById(roleId);
+        Optional<User> user = userRepository.findById(employeeId);
+        role.get().setUser(user.get());
+        userRepository.save(user.get());
+        roleRepository.save(role.get());
+    }
 
+    @Override
+    public String saveRole(Role role) {
+        roleRepository.save(role);
+        return "Role saved successfully";
+    }
+
+    @Override
+    public void addUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
+    }
+
+    @Override
+    public void assignUserToEmployee(Long employeeId, Long userId) throws IdNotFoundException {
+        Optional<Trainer> trainer = trainerRepository.findById(employeeId);
+        Optional<Trainee> trainee = traineeRepository.findById(employeeId);
+        Optional<User> user = userRepository.findById(userId);
+        if(trainer.isPresent() && user.isPresent()) {
+            trainer.get().setUser(user.get());
+            trainerRepository.save(trainer.get());
+        } else if (trainee.isPresent() && user.isPresent()) {
+            trainee.get().setUser(user.get());
+            traineeRepository.save(trainee.get());
+        }
+        else {
+            throw new IdNotFoundException("Cant able to find the id");
+        }
+    }
+
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUserName(username);
+        if(user == null) {
+            throw new UsernameNotFoundException("The user name is not found in this id");
+        }
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        user.getRoles().forEach(role -> {
+            new SimpleGrantedAuthority(role.getRoleName());
+        });
+        return new org.springframework.security.core.userdetails.User(user.getUserName(), user.getPassword(), authorities);
+    }
 }
 
 
