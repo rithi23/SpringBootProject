@@ -1,9 +1,21 @@
+/**
+ * <p>
+ * This is the package for model class
+ * Copyright 2022 - Ideas2it.
+ * </p>
+ */
 package com.ideas2it.employee.model;
 
-import com.ideas2it.employee.entity.Trainee;
-import com.ideas2it.employee.entity.Trainer;
 import lombok.Data;
 
+/**
+ * <p>
+ *     This class have trainer id and trainee id i.e used to assign trainer to trainees
+ * </p>
+ *
+ * @author : Rithikanth
+ * @since : 01/10/2022
+ */
 @Data
 public class AssociationModel {
     private Long trainerId;

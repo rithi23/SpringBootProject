@@ -1,3 +1,9 @@
+/**
+ * <p>
+ * This is the package for entity class
+ * Copyright 2022 - Ideas2it.
+ * </p>
+ */
 package com.ideas2it.employee.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -6,9 +12,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
+/**
+ * <p>
+ *     This class describes the role for the users and has role attributes
+ * </p>
+ *
+ * @author : Rithikanth
+ * @since : 01/10/2022
+ */
 @Data
 @Entity
 @NoArgsConstructor
@@ -20,6 +33,6 @@ public class Role {
     private String roleName;
 
     @JsonBackReference
-    @ManyToOne
-    private User user;
+    @ManyToMany(mappedBy = "roles")
+    private List<User> users;
 }

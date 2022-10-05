@@ -1,6 +1,11 @@
+/**
+ * <p>
+ * This is the package for entity class
+ * Copyright 2022 - Ideas2it.
+ * </p>
+ */
 package com.ideas2it.employee.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,10 +13,15 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
+/**
+ * <p>
+ *     This class contains employees attributes and it is an employee pojo
+ * </p>
+ *
+ * @author  : RithiKanth B C
+ * @since  : 01/10/2022
+ */
 @MappedSuperclass
 @Data
 @NoArgsConstructor

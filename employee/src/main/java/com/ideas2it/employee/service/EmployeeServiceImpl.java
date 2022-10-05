@@ -43,16 +43,25 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Trainer saveTrainer(Trainer trainer) {
         return trainerRepository.save(trainer);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Trainee saveTrainee(Trainee trainee) {
         return traineeRepository.save(trainee);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Trainer fetchTrainerById(long trainerId) throws TrainerNotFoundException {
         Optional<Trainer> trainer = Optional.ofNullable(trainerRepository.fetchTrainerById(trainerId));
@@ -62,6 +71,9 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
         return trainer.get();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Trainee fetchTraineeById(long traineeId) throws TraineeNotFoundException {
         Optional<Trainee> trainee = Optional.ofNullable(traineeRepository.fetchTraineeById(traineeId));
@@ -71,6 +83,9 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
         return  trainee.get();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Trainer updateTrainerById(long trainerId, Trainer trainer) throws TrainerNotFoundException {
         Trainer trainerEmployee = fetchTrainerById(trainerId);
@@ -118,6 +133,9 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
         return trainerRepository.save(trainerEmployee);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Trainee updateTraineeById(long traineeId, Trainee trainee) throws TraineeNotFoundException {
         Trainee traineeEmployee = fetchTraineeById(traineeId);
@@ -161,6 +179,9 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
         return traineeRepository.save(traineeEmployee);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String deleteTrainerById(long trainerId) throws TrainerNotFoundException {
         Trainer trainer =  fetchTrainerById(trainerId);
@@ -169,6 +190,9 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
         return "Trainer deleted successfully";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String deleteTraineeById(long traineeId) throws TraineeNotFoundException {
         Trainee trainee = fetchTraineeById(traineeId);
@@ -177,27 +201,9 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
         return "Trainee deleted successfully";
    }
 
-    public List<Trainer> getAllTrainers() {
-        List<Trainer> trainers = trainerRepository.getAllTrainers();
-        return trainers;
-    }
-
-    @Override
-    public List<Trainee> getAllTrainees() {
-        List<Trainee> trainees = traineeRepository.findByIsActiveTrue();
-        return trainees;
-    }
-
-    @Override
-    public Trainer fetchTrainerByEmployeeId(String trainerId) throws NullPointerException {
-        return trainerRepository.findByEmployeeId(trainerId);
-    }
-
-    @Override
-    public Trainee fetchTraineeByEmployeeId(String traineeId) {
-        return traineeRepository.findByEmployeeId(traineeId);
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void associateTrainerAndTrainee(long trainerId, long traineeId) throws TrainerNotFoundException, TraineeNotFoundException {
         Trainer trainer = fetchTrainerById(trainerId);
@@ -208,27 +214,40 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
         trainerRepository.save(trainer);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void addRoleToUser(long employeeId, long roleId) {
         Optional<Role> role = roleRepository.findById(roleId);
         Optional<User> user = userRepository.findById(employeeId);
-        role.get().setUser(user.get());
+        role.get().getUsers().add(user.get());
+        user.get().getRoles().add(role.get());
         userRepository.save(user.get());
         roleRepository.save(role.get());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String saveRole(Role role) {
         roleRepository.save(role);
         return "Role saved successfully";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void addUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void assignUserToEmployee(Long employeeId, Long userId) throws IdNotFoundException {
         Optional<Trainer> trainer = trainerRepository.findById(employeeId);
@@ -246,7 +265,9 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
         }
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUserName(username);
@@ -255,8 +276,9 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
         }
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
         user.getRoles().forEach(role -> {
-            new SimpleGrantedAuthority(role.getRoleName());
+            authorities.add(new SimpleGrantedAuthority(role.getRoleName()));
         });
+        System.out.println(authorities);
         return new org.springframework.security.core.userdetails.User(user.getUserName(), user.getPassword(), authorities);
     }
 }
