@@ -51,7 +51,6 @@ public class SecurityConfig  {
         http.authorizeRequests().antMatchers(HttpMethod.POST,"/addUser").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.POST,"/saveRole").permitAll();
         http.authorizeRequests().antMatchers(GET,"/trainer/**").hasAuthority("admin");
-        //http.authorizeRequests().antMatchers(HttpMethod.GET,"/trainer/**").hasAnyAuthority("admin","manager");
         http.authorizeRequests().antMatchers(GET,"/trainee/**").hasAnyAuthority("admin","manager");
         http.authorizeRequests().antMatchers(HttpMethod.PUT,"/trainer/**").hasAnyAuthority("admin");
         http.authorizeRequests().antMatchers(HttpMethod.PUT,"/trainee/**").hasAnyAuthority("admin");
